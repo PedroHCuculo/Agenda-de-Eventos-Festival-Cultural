@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda de Eventos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            padding: 40px 0;
+            color: white;
+        }
+
+        header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        /* Categorias */
+        .categories {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .category-btn {
+            padding: 12px 25px;
+            background: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .category-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        .category-btn.active {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        /* Eventos */
+        .events-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .event-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .event-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .event-header {
+            padding: 20px;
+            color: white;
+            position: relative;
+        }
+
+        .event-header.shows {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+        }
+
+        .event-header.aniversario {
+            background: linear-gradient(135deg, #a29bfe, #6c5ce7);
+        }
+
+        .event-header.igreja {
+            background: linear-gradient(135deg, #00b894, #00a085);
+        }
+
+        .event-date {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .event-title {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .event-artist {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .event-body {
+            padding: 20px;
+        }
+
+        .event-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            color: #555;
+        }
+
+        .event-info i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .event-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+        }
+
+        .btn-primary {
+            background: #4ecdc4;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        /* Formulário de Novo Evento */
+        .add-event-form {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            margin-top: 40px;
+        }
+
+        .form-title {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #333;
+            font-size: 1.8rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #4ecdc4;
+            box-shadow: 0 0 0 2px rgba(78, 205, 196, 0.2);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: center;
+            margin-top: 25px;
+        }
+
+        .btn-submit {
+            background: #667eea;
+            color: white;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            color: white;
+            margin-top: 50px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Responsivo */
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .events-container {
+                grid-template-columns: 1fr;
+            }
+            
+            header h1 {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎪 Minha Agenda de Eventos</h1>
+            <p>Organize seus shows, festas e eventos religiosos em um só lugar</p>
+        </header>
+
+        <!-- Filtros por Categoria -->
+        <div class="categories">
+            <button class="category-btn active" data-category="all">Todos os Eventos</button>
+            <button class="category-btn" data-category="shows">🎤 Shows</button>
+            <button class="category-btn" data-category="aniversario">🎂 Aniversários</button>
+            <button class="category-btn" data-category="igreja">⛪ Igreja</button>
+        </div>
+
+        <!-- Lista de Eventos -->
+        <div class="events-container" id="eventsContainer">
+            <!-- Eventos serão inseridos aqui via JavaScript -->
+        </div>
+
+        <!-- Formulário para Adicionar Evento -->
+        <div class="add-event-form">
+            <h2 class="form-title">➕ Adicionar Novo Evento</h2>
+            <form id="eventForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="eventTitle">Título do Evento</label>
+                        <input type="text" id="eventTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="eventCategory">Categoria</label>
+                        <select id="eventCategory" required>
+                            <option value="">Selecione uma categoria</option>
+                            <option value="shows">Show</option>
+                            <option value="aniversario">Festa de Aniversário</option>
+                            <option value="igreja">Evento na Igreja</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="eventDate">Data do Evento</label>
+                        <input type="date" id="eventDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="eventTime">Horário</label>
+                        <input type="time" id="eventTime" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="eventLocation">Local</label>
+                        <input type="text" id="eventLocation" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="eventArtist">Artista/Aniversariante (se aplicável)</label>
+                        <input type="text" id="eventArtist">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="eventDescription">Descrição</label>
+                    <textarea id="eventDescription"></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-submit">Adicionar Evento</button>
+                </div>
+            </form>
+        </div>
+
+        <footer>
+            <p>© 2024 Minha Agenda de Eventos - Organize sua vida social</p>
+        </footer>
+    </div>
+
+    <script>
+        // Dados iniciais dos eventos
+        const eventos = [
+            {
+                id: 1,
+                titulo: "On The Road Again",
+                artista: "Shawn Mendes",
+                data: "2025-10-08",
+                horario: "19:30",
+                local: "Huntington Bank Pavilion at Northerly Island",
+                descricao: "Este evento faz parte da sua turnê On The Road Again e contará com a participação de Eddie Benjamin como convidado especial",
+                categoria: "shows"
+            },
+            {
+                id: 2,
+                titulo: "The Mayhem Ball",
+                artista: "Lady Gaga",
+                data: "2025-10-07",
+                horario: "20:00 (BTS)",
+                local: "Manchester, Reino Unido",
+                descricao: "O show da Lady Gaga, parte da turnê The Mayhem Ball, é uma experiência teatral e imersiva dividida em atos, com estética gótica e uma narrativa sobre o caos pessoal. Fãs podem esperar um espetáculo grandioso, que mistura os sucessos mais antigos e os mais recentes da cantora, com uma produção visual impressionante e momentos de conexão íntima com o público.",
+                categoria: "shows"
+            },
+            {
+                id: 3,
+                titulo: "Aniversário do João Victor",
+                artista: "João Victor Codato Cuculo",
+                data: "2025-10-28",
+                horario: "Qualquer horário",
+                local: "Não definido",
+                descricao: "João Victor faz 20 anos de vida!",
+                categoria: "aniversario"
+            },
+            {
+                id: 4,
+                titulo: "DNJ",
+                artista: "Paróquia Santo Antônio",
+                data: "2025-10-26",
+                horario: "Aproximadamente 12:00",
+                local: "Paróquia Santo Antônio - Indianópolis, Paraná",
+                descricao: "Dia Nacional da Juventude, uma celebração da Igreja Católica que ocorrerá na cidade de Indianópolis em 26 de outubro de 2025, na Paróquia Santo Antônio, para reunir jovens da Diocese de Umuarama.",
+                categoria: "igreja"
+            }
+
+        ];
+
+        // Elementos do DOM
+        const eventsContainer = document.getElementById('eventsContainer');
+        const categoryButtons = document.querySelectorAll('.category-btn');
+        const eventForm = document.getElementById('eventForm');
+
+        // Função para formatar data
+        function formatarData(data) {
+            const options = { day: 'numeric', month: 'long', year: 'numeric' };
+            return new Date(data + 'T00:00:00').toLocaleDateString('pt-BR', options);
+        }
+
+        // Função para renderizar eventos
+        function renderizarEventos(categoria = 'all') {
+            eventsContainer.innerHTML = '';
+            
+            const eventosFiltrados = categoria === 'all' 
+                ? eventos 
+                : eventos.filter(evento => evento.categoria === categoria);
+            
+            eventosFiltrados.forEach(evento => {
+                const eventCard = document.createElement('div');
+                eventCard.className = 'event-card';
+                
+                eventCard.innerHTML = `
+                    <div class="event-header ${evento.categoria}">
+                        <div class="event-date">${formatarData(evento.data)}</div>
+                        <div class="event-title">${evento.titulo}</div>
+                        ${evento.artista ? `<div class="event-artist">${evento.artista}</div>` : ''}
+                    </div>
+                    <div class="event-body">
+                        <div class="event-info">
+                            <i>🕒</i> ${evento.horario}
+                        </div>
+                        <div class="event-info">
+                            <i>📍</i> ${evento.local}
+                        </div>
+                        ${evento.descricao ? `
+                        <div class="event-info">
+                            <i>📝</i> ${evento.descricao}
+                        </div>
+                        ` : ''}
+                        <div class="event-actions">
+                            <button class="btn btn-primary" onclick="confirmarPresenca(${evento.id})">
+                                Confirmar Presença
+                            </button>
+                            <button class="btn btn-secondary" onclick="compartilharEvento(${evento.id})">
+                                Compartilhar
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                eventsContainer.appendChild(eventCard);
+            });
+        }
+
+        // Função para adicionar novo evento
+        function adicionarEvento(event) {
+            event.preventDefault();
+            
+            const novoEvento = {
+                id: eventos.length + 1,
+                titulo: document.getElementById('eventTitle').value,
+                artista: document.getElementById('eventArtist').value,
+                data: document.getElementById('eventDate').value,
+                horario: document.getElementById('eventTime').value,
+                local: document.getElementById('eventLocation').value,
+                descricao: document.getElementById('eventDescription').value,
+                categoria: document.getElementById('eventCategory').value
+            };
+            
+            eventos.push(novoEvento);
+            renderizarEventos();
+            eventForm.reset();
+            
+            alert('Evento adicionado com sucesso!');
+        }
+
+        // Funções de interação
+        function confirmarPresenca(eventoId) {
+            const evento = eventos.find(e => e.id === eventoId);
+            alert(`Presença confirmada para: ${evento.titulo}`);
+        }
+
+        function compartilharEvento(eventoId) {
+            const evento = eventos.find(e => e.id === eventoId);
+            if (navigator.share) {
+                navigator.share({
+                    title: evento.titulo,
+                    text: evento.descricao,
+                    url: window.location.href
+                });
+            } else {
+                alert(`Compartilhe o evento: ${evento.titulo}\nData: ${formatarData(evento.data)}\nLocal: ${evento.local}`);
+            }
+        }
+
+        // Event Listeners
+        categoryButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                categoryButtons.forEach(btn => btn.classList.remove('active'));
+                e.target.classList.add('active');
+                renderizarEventos(e.target.dataset.category);
+            });
+        });
+
+        eventForm.addEventListener('submit', adicionarEvento);
+
+        // Inicialização
+        renderizarEventos();
+    </script>
+</body>
+</html>
